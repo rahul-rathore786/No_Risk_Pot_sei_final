@@ -189,7 +189,7 @@
 }
 
 .admin-button:disabled {
-  background-color: #cbd5e1;
+  background-color: #f28b8b;
   cursor: not-allowed;
 }
 

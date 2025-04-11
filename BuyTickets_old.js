@@ -1,34 +1,36 @@
 import React, { useState, useEffect } from "react";
+import { ethers } from "ethers";
 import "../styles/BuyTickets.css";
+import PyusdFaucetInfo from "../components/PyusdFaucetInfo";
 
 function BuyTickets({
   lotteryContract,
-  seiContract,
+  pyusdContract,
   lotteryData,
   refreshData,
-  parseSei,
+  parsePyusd,
 }) {
   const [numTickets, setNumTickets] = useState(1);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
-  const [allowance, setAllowance] = useState(0);
+  const [isApproved, setIsApproved] = useState(false);
 
   const maxTicketsAvailable = 10 - lotteryData.userTickets;
   const totalCost = numTickets;
-  const hasSufficientSei = parseFloat(lotteryData.seiBalance) >= totalCost;
+  const hasSufficientPyusd = parseFloat(lotteryData.pyusdBalance) >= totalCost;
 
-  // Check if user has already approved SEI for the lottery contract
+  // Check if PYUSD is already approved
   useEffect(() => {
     const checkAllowance = async () => {
-      if (lotteryContract && seiContract) {
+      if (pyusdContract && lotteryContract) {
         try {
-          const userAllowance = await seiContract.allowance(
-            await seiContract.signer.getAddress(),
+          const address = await pyusdContract.signer.getAddress();
+          const allowance = await pyusdContract.allowance(
+            address,
             lotteryContract.address
           );
-
-          // Convert from wei to SEI
-          setAllowance(parseFloat(userAllowance) / 10 ** 18);
+          const amountNeeded = parsePyusd(totalCost);
+          setIsApproved(allowance.gte(amountNeeded));
         } catch (error) {
           console.error("Error checking allowance:", error);
         }
@@ -36,7 +38,7 @@ function BuyTickets({
     };
 
     checkAllowance();
-  }, [lotteryContract, seiContract]);
+  }, [pyusdContract, lotteryContract, totalCost, parsePyusd]);
 
   const handleNumTicketsChange = (e) => {
     const value = parseInt(e.target.value);
@@ -45,27 +47,28 @@ function BuyTickets({
     }
   };
 
-  const handleApproveTokens = async () => {
-    if (!lotteryContract || !seiContract) return;
+  const handleApprove = async () => {
+    if (!pyusdContract) return;
 
     setLoading(true);
-    setMessage({ text: "Approving SEI...", type: "info" });
+    setMessage({ text: "Approving PYUSD...", type: "info" });
 
     try {
-      // Approve SEI for all future transactions
-      const amountToApprove = parseSei(1000); // Approve 1000 SEI
-      const tx = await seiContract.approve(
+      // Use parsePyusd for handling 6 decimals
+      const amountToApprove = parsePyusd(totalCost);
+
+      const tx = await pyusdContract.approve(
         lotteryContract.address,
         amountToApprove
       );
       await tx.wait();
 
-      setMessage({ text: "SEI approved successfully!", type: "success" });
-      setAllowance(1000);
+      setIsApproved(true);
+      setMessage({ text: "PYUSD approved successfully!", type: "success" });
     } catch (error) {
-      console.error("Error approving SEI:", error);
+      console.error("Error approving PYUSD:", error);
       setMessage({
-        text: "Failed to approve SEI. Please try again.",
+        text: "Failed to approve PYUSD. Please try again.",
         type: "error",
       });
     } finally {
@@ -80,11 +83,6 @@ function BuyTickets({
     setMessage({ text: "Buying tickets...", type: "info" });
 
     try {
-      // Check if allowance is enough
-      if (allowance < totalCost) {
-        throw new Error("Please approve SEI for the lottery contract first.");
-      }
-
       const tx = await lotteryContract.buyTickets(numTickets);
       await tx.wait();
 
@@ -95,46 +93,28 @@ function BuyTickets({
       refreshData();
     } catch (error) {
       console.error("Error buying tickets:", error);
-      setMessage({
-        text: "Failed to buy tickets: " + (error.message || "Unknown error"),
-        type: "error",
-      });
+
+      // Check if it might be an approval issue
+      if (error.message.includes("allowance")) {
+        setMessage({
+          text: "Please approve PYUSD spending first.",
+          type: "error",
+        });
+        setIsApproved(false);
+      } else {
+        setMessage({
+          text: "Failed to buy tickets. Please try again.",
+          type: "error",
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // Display SEI Faucet info if balance is zero
-  if (parseFloat(lotteryData.seiBalance) === 0) {
-    return (
-      <div className="buy-tickets-container">
-        <h1>Get SEI Tokens</h1>
-        <div className="faucet-info">
-          <h2>You need SEI tokens to participate in the lottery</h2>
-          <p>
-            To get SEI tokens for the testnet, visit the official SEI Faucet:
-          </p>
-          <a
-            href="https://www.docs.sei.io/learn/faucet"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="faucet-button"
-          >
-            Visit SEI Faucet
-          </a>
-          <p className="faucet-note">
-            After receiving tokens, refresh this page to see your updated
-            balance.
-          </p>
-          <button
-            className="refresh-button"
-            onClick={() => window.location.reload()}
-          >
-            Refresh Page
-          </button>
-        </div>
-      </div>
-    );
+  // Show PYUSD Faucet Info if user has no PYUSD
+  if (parseFloat(lotteryData.pyusdBalance) === 0) {
+    return <PyusdFaucetInfo />;
   }
 
   return (
@@ -161,8 +141,8 @@ function BuyTickets({
         <div className="ticket-purchase-form">
           <div className="ticket-purchase-summary">
             <div className="summary-item">
-              <h3>Your SEI Balance</h3>
-              <p>{parseFloat(lotteryData.seiBalance).toFixed(2)} SEI</p>
+              <h3>Your PYUSD Balance</h3>
+              <p>{parseFloat(lotteryData.pyusdBalance).toFixed(2)} PYUSD</p>
             </div>
 
             <div className="summary-item">
@@ -209,10 +189,10 @@ function BuyTickets({
 
           <div className="ticket-cost">
             <h3>Total Cost</h3>
-            <p className="cost-value">{totalCost} SEI</p>
-            {!hasSufficientSei && (
+            <p className="cost-value">{totalCost} PYUSD</p>
+            {!hasSufficientPyusd && (
               <p className="insufficient-funds">
-                Insufficient SEI balance. Visit the SEI faucet to get more
+                Insufficient PYUSD balance. Visit the PYUSD faucet to get more
                 tokens.
               </p>
             )}
@@ -225,19 +205,19 @@ function BuyTickets({
           )}
 
           <div className="ticket-actions">
-            {allowance < totalCost ? (
+            {!isApproved ? (
               <button
                 className="approve-button"
-                onClick={handleApproveTokens}
-                disabled={loading || !hasSufficientSei}
+                onClick={handleApprove}
+                disabled={loading || !hasSufficientPyusd}
               >
-                {loading ? "Processing..." : "Approve SEI"}
+                {loading ? "Processing..." : "Approve PYUSD"}
               </button>
             ) : (
               <button
                 className="buy-button"
                 onClick={handleBuyTickets}
-                disabled={loading || !hasSufficientSei || allowance < totalCost}
+                disabled={loading || !hasSufficientPyusd || !isApproved}
               >
                 {loading ? "Processing..." : "Buy Tickets"}
               </button>
@@ -246,28 +226,16 @@ function BuyTickets({
 
           <div className="faucet-reminder">
             <p>
-              Need more SEI tokens?{" "}
+              Need more PYUSD?{" "}
               <a
-                href="https://www.docs.sei.io/learn/faucet"
+                href="https://faucet.paxos.com/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="faucet-link"
               >
-                Access the SEI Faucet
+                Access the PYUSD Faucet
               </a>
             </p>
-          </div>
-
-          <div className="how-it-works">
-            <h3>How It Works</h3>
-            <ul>
-              <li>Buy tickets with SEI tokens</li>
-              <li>All ticket funds are fully refundable after the draw</li>
-              <li>Winners share the interest earned on the ticket pool</li>
-              <li>First place receives 50% of interest</li>
-              <li>Second place receives 30% of interest</li>
-              <li>Everyone gets their initial ticket cost back</li>
-            </ul>
           </div>
         </div>
       )}
