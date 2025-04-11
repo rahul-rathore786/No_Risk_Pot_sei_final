@@ -1,0 +1,159 @@
+.sei-faucet-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.sei-faucet-card {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  color: #333;
+}
+
+.sei-faucet-card h1 {
+  color: #3b82f6;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.sei-faucet-card h2 {
+  color: #4b5563;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.sei-intro-section {
+  margin-bottom: 2rem;
+  text-align: center;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.get-tokens-section {
+  margin-bottom: 2rem;
+}
+
+.get-tokens-section h3 {
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+  color: #4b5563;
+  font-size: 1.3rem;
+}
+
+.steps-list {
+  list-style-type: none;
+  padding: 0;
+  counter-reset: step-counter;
+}
+
+.steps-list li {
+  margin-bottom: 2rem;
+  position: relative;
+  padding-left: 1rem;
+}
+
+.steps-list li strong {
+  display: block;
+  color: #3b82f6;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.network-details {
+  background-color: #f0f4f8;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  list-style-type: none;
+}
+
+.network-details li {
+  margin-bottom: 0.75rem;
+  padding: 0;
+}
+
+.detail-label {
+  font-weight: bold;
+  color: #4b5563;
+  display: inline-block;
+  width: 140px;
+}
+
+.button-section {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.back-button,
+.explorer-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.back-button {
+  background-color: #e5e7eb;
+  color: #4b5563;
+}
+
+.back-button:hover {
+  background-color: #d1d5db;
+}
+
+.explorer-button {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.explorer-button:hover {
+  background-color: #2563eb;
+}
+
+.info-footer {
+  border-top: 1px solid #e5e7eb;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .sei-faucet-container {
+    padding: 1rem;
+    margin: 1rem auto;
+  }
+
+  .sei-faucet-card {
+    padding: 1.5rem;
+  }
+
+  .network-details {
+    padding: 1rem;
+  }
+
+  .button-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .back-button,
+  .explorer-button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+}
