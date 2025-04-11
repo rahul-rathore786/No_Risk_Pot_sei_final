@@ -12,7 +12,7 @@ import ClaimFunds from "./pages/ClaimFunds";
 
 // Contract ABIs
 import ZeroLossLotteryABI from "./artifacts/contracts/ZeroLossLottery.sol/ZeroLossLottery.json";
-import ERC20ABI from "./contracts/ERC20ABI.json";
+import SeiTokenABI from "./contracts/SeiTokenABI.json";
 
 // SEI token has 18 decimals
 const SEI_DECIMALS = 18;
@@ -70,7 +70,7 @@ function App() {
         );
         setLotteryContract(lottery);
 
-        const sei = new ethers.Contract(seiAddr, ERC20ABI, web3Signer);
+        const sei = new ethers.Contract(seiAddr, SeiTokenABI, web3Signer);
         setSeiContract(sei);
 
         // Check if user is owner

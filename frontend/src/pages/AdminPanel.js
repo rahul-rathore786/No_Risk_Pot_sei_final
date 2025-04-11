@@ -404,12 +404,23 @@ function AdminPanel({
               the next round.
             </p>
 
+            <div className="action-info">
+              <p>
+                Platform Fee Amount:{" "}
+                {(parseFloat(lotteryData.interestPool) * 0.2).toFixed(2)} SEI
+              </p>
+            </div>
+
             <button
               className="admin-button claim-fee-button"
               onClick={handleClaimPlatformFee}
               disabled={loading}
             >
-              {loading ? "Processing..." : "Claim & Reset"}
+              {loading
+                ? "Processing..."
+                : `Claim ${(parseFloat(lotteryData.interestPool) * 0.2).toFixed(
+                    2
+                  )} SEI & Reset`}
             </button>
           </div>
         )}
