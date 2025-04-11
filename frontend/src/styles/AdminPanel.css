@@ -168,6 +168,26 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.mint-button {
+  background-color: #0284c7;
+}
+
+.mint-button:hover:not(:disabled) {
+  background-color: #0369a1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.transfer-button {
+  background-color: #0284c7;
+}
+
+.transfer-button:hover:not(:disabled) {
+  background-color: #0369a1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .draw-winners-button {
   background-color: #f59e0b;
 }
