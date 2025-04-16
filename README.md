@@ -31,8 +31,8 @@ NoRiskPot is a zero-loss lottery built on the SEI Testnet blockchain. Players ca
 1. Clone the repository:
 
    ```
-   git clone https://github.com/yourusername/no-risk-pot.git
-   cd no-risk-pot
+   git clone https://github.com/rahul-rathore786/No_Risk_Pot_sei_final
+   cd No_Risk_Pot_sei_final
    ```
 
 2. Install dependencies:
