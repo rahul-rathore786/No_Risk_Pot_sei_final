@@ -5,10 +5,12 @@ function Home({ lotteryData, setPage, isOwner }) {
   return (
     <div className="home-container">
       <div className="hero-section">
-        <h1 className="hero-title">The First Zero-Loss Lottery</h1>
+        <h1 className="hero-title">
+          Play Smart, Win Big. Risk Nothing & Gain Everything.
+        </h1>
         <p className="hero-subtitle">
-          Purchase tickets and get your money back, guaranteed. Win from the
-          interest pool!
+          Play the no-loss lottery Game on Sei Network. Your money stays safe,
+          and only the interest fuels the prize pool.
         </p>
         {!lotteryData.drawCompleted ? (
           <button className="cta-button" onClick={() => setPage("buy")}>
